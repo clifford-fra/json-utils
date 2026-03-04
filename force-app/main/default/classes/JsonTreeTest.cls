@@ -1,5 +1,5 @@
 /**
- * @File Name          : Test_JsonTree.cls
+ * @File Name          : JsonTreeTest.cls
  * @Description        : test class forr JsonTree
  * @Author             : Clifford Beul
  * @Last Modified By   : c.beul
@@ -9,7 +9,7 @@
  * 1.0       15.4.2021       c.beul                 Initial Version
 **/
 @IsTest
-public class Test_JsonTree {
+public class JsonTreeTest {
 
     @IsTest
     static void testbuild() {

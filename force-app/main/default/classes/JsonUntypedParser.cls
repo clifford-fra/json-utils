@@ -12,9 +12,12 @@
  * 1.0       2022-05-08      Clifford Beul          Initial Version
 **/
 public with sharing class JsonUntypedParser {
-    Object jsonObject;
-    Object pointer;
-    Boolean throwUndefined = false;
+    private Object jsonObject;
+    private Object pointer;
+    private Boolean throwUndefined = false;
+
+    @TestVisible
+    private static Map<String, Object> json2deserializedObject = new Map<String, Object>();
 
     public enum TokenType {ARRAY_ELEMENT, JSON_ARRAY, VALUE}
 
@@ -23,7 +26,31 @@ public with sharing class JsonUntypedParser {
      * @param  jsonString the json you want to parse as a String.
      */
     public JsonUntypedParser(String jsonString) {
-        this.jsonObject = JSON.deserializeUntyped(jsonString);
+        this(jsonString, false);
+    }
+
+    /**
+     * @description Creates a new JsonUntypedParser with a json as a String
+     * @param  jsonString the json you want to parse as a String.
+     * @param enableCache if true, the Parser will cache the deserialized json
+     *                    for the transaction or use an already cached deserialzed json.
+     */
+    public JsonUntypedParser(String jsonString, Boolean enableCache) {
+        if (!enableCache) {
+            this.jsonObject = JSON.deserializeUntyped(jsonString);
+            return;
+        }
+
+        Blob targetBlob = Blob.valueOf(jsonString);
+        Blob hash = Crypto.generateDigest('MD5', targetBlob);
+        String hashString = EncodingUtil.base64Encode(hash);
+
+        if (json2deserializedObject.containsKey(hashString)) {
+            this.jsonObject = json2deserializedObject.get(hashString);
+        } else {
+            this.jsonObject = JSON.deserializeUntyped(jsonString);
+            json2deserializedObject.put(hashString, this.jsonObject);
+        }
     }
 
     /**

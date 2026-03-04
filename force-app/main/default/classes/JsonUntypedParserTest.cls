@@ -7,7 +7,7 @@
  * 1.0       2022-05-08      Clifford Beul          Initial Version
 **/
 @IsTest
-private with sharing class Test_JsonUntypedParser {
+private with sharing class JsonUntypedParserTest {
     
     static String getMockJson() {
         return '{\n' +
@@ -29,6 +29,17 @@ private with sharing class Test_JsonUntypedParser {
                     ' "now" : "2013-10-21T13:28:06.419Z",\n' +
                     ' "arrivalTime" : "18:05" \n' +
                 '}';
+    }
+
+    @IsTest
+    static void testCache() {        
+        Test.startTest();
+        JsonUntypedParser parser = new JsonUntypedParser(getMockJson(), true);
+        JsonUntypedParser parser2 = new JsonUntypedParser(getMockJson(), true);
+        Test.stopTest();
+        
+        Assert.areEqual(1, JsonUntypedParser.json2deserializedObject.size(), 'JSON was not cached');
+        Assert.areEqual(parser.getDeserializedJson(), parser2.getDeserializedJson(), 'Should have been the same object');
     }
 
     @IsTest
