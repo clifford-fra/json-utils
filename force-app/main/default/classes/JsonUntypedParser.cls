@@ -11,6 +11,7 @@
  * Ver       Date            Author      		    Modification
  * 1.0       2022-05-08      Clifford Beul          Initial Version
 **/
+@SuppressWarnings('PMD.CyclomaticComplexity')
 public with sharing class JsonUntypedParser {
     private Object jsonObject;
     private Object pointer;
@@ -35,6 +36,7 @@ public with sharing class JsonUntypedParser {
      * @param enableCache if true, the Parser will cache the deserialized json
      *                    for the transaction or use an already cached deserialzed json.
      */
+    @SuppressWarnings('PMD.AvoidBooleanMethodParameters')
     public JsonUntypedParser(String jsonString, Boolean enableCache) {
         if (!enableCache) {
             this.jsonObject = JSON.deserializeUntyped(jsonString);
@@ -265,7 +267,7 @@ public with sharing class JsonUntypedParser {
         parser.nextValue();
         return parser.getTimeValue();
     }
-    
+
     /**
      * @description Retrieves something of the deserialized json by recursively
      *              going through a token stream. This method can also retrieve
@@ -294,6 +296,7 @@ public with sharing class JsonUntypedParser {
      * @return             the Object where the token stream leads to.
      *                     if something is accessed, that does not exist, null is returned.
      */
+    @SuppressWarnings('PMD.CognitiveComplexity')
     private Object getRecursive(List<String> tokenStream) {
         if (tokenStream.isEmpty()) {
             return this.pointer;
@@ -304,7 +307,7 @@ public with sharing class JsonUntypedParser {
         switch on getTokenType(currentToken) {
 
             // e.g. [42]
-            when ARRAY_ELEMENT {     
+            when ARRAY_ELEMENT {
                 Integer index = extractArrayIndex(currentToken);
 
                 // Checks if the value is an array and has the index
@@ -330,7 +333,7 @@ public with sharing class JsonUntypedParser {
                 if(!isArray(pointer) || !hasIndex(pointer, index)) {
                     return handleUndefined();
                 }
-                pointer = ((List<Object>)pointer).get(index);    
+                pointer = ((List<Object>)pointer).get(index);
             }
 
             // e.g. clifford
@@ -379,14 +382,14 @@ public with sharing class JsonUntypedParser {
 
     /**
      * @description Extracts the name of an array access token
-     * 
+     *
      * @param  token a String e.g. myArray[2]
      * @return       a String with the arrayname e.g. myArray
      */
     private String extractArrayName(String token) {
         return token.substringBeforeLast('[');
     }
-    
+
     /**
      * @description Checks if an Object is an array
      * @param  obj the Object to check
@@ -438,5 +441,9 @@ public with sharing class JsonUntypedParser {
         return null;
     }
 
+    /**
+     * @description Exception that is thrown if a non existing value is accessed
+     *              and throwUndefined() has been called before.
+     */
     public class UndefinedException extends Exception {}
  }

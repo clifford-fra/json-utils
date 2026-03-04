@@ -8,16 +8,16 @@
 **/
 @IsTest
 private with sharing class JsonUntypedParserTest {
-    
+
     static String getMockJson() {
         return '{\n' +
                     ' "description" :"An appliance",\n' +
-                    ' "accessories" : [ "powerCord", ' + 
-                                        '{ "right":"door handle1", ' + 
+                    ' "accessories" : [ "powerCord", ' +
+                                        '{ "right":"door handle1", ' +
                                             '"left":"door handle2" } ],\n' +
-                    ' "dimensions" : ' + 
-                            '{ "height" : 5.5 , ' + 
-                                '"width" : 3.0 , ' + 
+                    ' "dimensions" : ' +
+                            '{ "height" : 5.5 , ' +
+                                '"width" : 3.0 , ' +
                                 '"depth" : 2.2 },\n' +
                     ' "type" : null,\n' +
                     ' "inventory" : 2000,\n' +
@@ -32,12 +32,12 @@ private with sharing class JsonUntypedParserTest {
     }
 
     @IsTest
-    static void testCache() {        
+    static void testCache() {
         Test.startTest();
         JsonUntypedParser parser = new JsonUntypedParser(getMockJson(), true);
         JsonUntypedParser parser2 = new JsonUntypedParser(getMockJson(), true);
         Test.stopTest();
-        
+
         Assert.areEqual(1, JsonUntypedParser.json2deserializedObject.size(), 'JSON was not cached');
         Assert.areEqual(parser.getDeserializedJson(), parser2.getDeserializedJson(), 'Should have been the same object');
     }
@@ -104,7 +104,7 @@ private with sharing class JsonUntypedParserTest {
         Test.stopTest();
 
         System.assert(exceptionAppeared, 'An UndefinedException was not thrown');
-    } 
+    }
 
     @IsTest
     static void testGetJson() {
@@ -148,7 +148,7 @@ private with sharing class JsonUntypedParserTest {
         Test.startTest();
         Boolean isShipped = parser.getBoolean('isShipped');
         Test.stopTest();
-        
+
         System.assert(isShipped, 'Boolean was wrong');
     }
 
@@ -159,7 +159,7 @@ private with sharing class JsonUntypedParserTest {
         Test.startTest();
         Integer inventory = parser.getInteger('inventory');
         Test.stopTest();
-        
+
         System.assertEquals(2000, inventory, 'Integer was wrong');
     }
 
@@ -170,7 +170,7 @@ private with sharing class JsonUntypedParserTest {
         Test.startTest();
         Long inventory = parser.getLong('inventory');
         Test.stopTest();
-        
+
         System.assertEquals(2000, inventory, 'Long was wrong');
     }
 
